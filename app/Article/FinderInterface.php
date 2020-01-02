@@ -6,6 +6,6 @@ interface FinderInterface
 {
     function __construct(string $section);
     function findBySlug(string $slug): Article;
-    function findByCategory(string $category): array;
+    function findByCategories(array $categories): array;
     function findAll(): array;
 }

@@ -1,2 +1,12 @@
-<h1> Hello </h1>
-<?php echo $slug;
+<?php
+foreach ($articles as $article) : ?>
+    <div class="card mt-3">
+        <div class="card-body">
+            <?php echo $article->text(); ?>
+            <p><?php echo $article->getDate(); ?></p>
+            <p><?php echo $article->getSlug(); ?></p>
+            <p><?php echo $article->getPath(); ?></p>
+            <p><?php echo implode('|', $article->getCategories()); ?></p>
+        </div>
+    </div>
+<?php endforeach; ?>

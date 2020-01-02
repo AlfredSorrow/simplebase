@@ -2,7 +2,10 @@
 
 namespace SimpleBase\Article;
 
+use Exception;
 use RecursiveDirectoryIterator;
+use FilesystemIterator;
+use RecursiveIteratorIterator;
 
 class Finder implements FinderInterface
 {
@@ -29,22 +32,33 @@ class Finder implements FinderInterface
             return $article['slug'] === $slug;
         });
 
-        s($filteredArticle);
-        return new Article($filteredArticle);
+        return new Article(array_pop($filteredArticle));
     }
     public function findAll(): array
     {
-        return [];
+        $articleCollection = $this->collectArticles($this->sectionPath);
+
+        return array_map(function ($article) {
+            return new Article($article);
+        }, $articleCollection);
     }
-    public function findByCategory(string $category): array
+    public function findByCategories(array $categories): array
     {
-        return [];
+        $categoryPath = $this->sectionPath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $categories);
+        $articleCollection = $this->collectArticles($categoryPath);
+
+        return array_map(function ($article) {
+            return new Article($article);
+        }, $articleCollection);
     }
 
-    private function collectArticles($path)
+    private function collectArticles(string $path): array
     {
-        $directory = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
-        $iterator = new \RecursiveIteratorIterator($directory);
+        if (!is_dir($path)) {
+            throw new Exception('This Category does not exist');
+        }
+        $directory = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
+        $iterator = new RecursiveIteratorIterator($directory);
 
         $articleCollection = [];
 
@@ -52,10 +66,10 @@ class Finder implements FinderInterface
             $categories = $this->getCategoriesFromPath($file->getPath());
             ['date' => $date, 'slug' => $slug] = $this->parseFileName($file->getBaseName('.md'));
             $articleCollection[] = [
-                'slug' => $slug,
-                'date' => $date,
-                'categories' => $categories,
-                'path' => $file->getRealPath()
+                'slug'          => $slug,
+                'date'          => $date,
+                'categories'    => $categories,
+                'path'          => $file->getRealPath()
             ];
         }
 
@@ -68,7 +82,7 @@ class Finder implements FinderInterface
         $date = implode('-', array_slice($fileNameParts, 0, 3));
         $slug = implode('-', array_slice($fileNameParts, 3));
 
-        return ['date' => $date, 'slug' => $slug];
+        return compact('date', 'slug');
     }
 
     private function getCategoriesFromPath($path)
@@ -81,7 +95,8 @@ class Finder implements FinderInterface
         );
     }
 
-    private function filter($slug)
+    private function sort($order = 'desc'): array
     {
+        return [];
     }
 }
