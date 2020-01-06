@@ -25,7 +25,7 @@
             "SimpleBase\\": "app/"
         },
         "files": [
-            "app/Renderer.php"
+            "app/Functions.php"
         ]
     }
 }

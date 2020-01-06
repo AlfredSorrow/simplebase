@@ -10,6 +10,7 @@ class Article
     private $slug;
     private $date;
     private $categories;
+    private $section;
     private $path;
     private $parser;
 
@@ -18,6 +19,7 @@ class Article
         $this->slug =       $articleMeta['slug'];
         $this->date =       $articleMeta['date'];
         $this->categories = $articleMeta['categories'];
+        $this->section =    $articleMeta['section'];
         $this->path =       $articleMeta['path'];
         $this->parser =     new Parsedown();
     }
@@ -45,5 +47,15 @@ class Article
     public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    public function getSection(): string
+    {
+        return $this->section;
+    }
+
+    public function getLink(): string
+    {
+        return '/' . $this->getSection() . '/' . $this->getSlug();
     }
 }

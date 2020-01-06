@@ -6,15 +6,15 @@ use Exception;
 use RecursiveDirectoryIterator;
 use FilesystemIterator;
 use RecursiveIteratorIterator;
+use DateTime;
 
 class Finder implements FinderInterface
 {
     private $section;
-    private $articles;
 
     static $rootDirectory;
 
-    public static function setRootDirectory($path)
+    public static function setRootDirectory(string $path)
     {
         self::$rootDirectory = $path;
     }
@@ -32,24 +32,36 @@ class Finder implements FinderInterface
             return $article['slug'] === $slug;
         });
 
-        return new Article(array_pop($filteredArticle));
+        if (count($filteredArticle) > 1) {
+            throw new Exception('Two articles with same slug');
+        }
+
+        if (empty($filteredArticle)) {
+            throw new Exception('Not Found');
+        }
+
+        return new Article(current($filteredArticle));
     }
     public function findAll(): array
     {
         $articleCollection = $this->collectArticles($this->sectionPath);
 
-        return array_map(function ($article) {
+        $articles = array_map(function ($article) {
             return new Article($article);
         }, $articleCollection);
+
+        return $this->sort($articles);
     }
     public function findByCategories(array $categories): array
     {
         $categoryPath = $this->sectionPath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $categories);
         $articleCollection = $this->collectArticles($categoryPath);
 
-        return array_map(function ($article) {
+        $articles = array_map(function ($article) {
             return new Article($article);
         }, $articleCollection);
+
+        return $this->sort($articles);
     }
 
     private function collectArticles(string $path): array
@@ -69,7 +81,8 @@ class Finder implements FinderInterface
                 'slug'          => $slug,
                 'date'          => $date,
                 'categories'    => $categories,
-                'path'          => $file->getRealPath()
+                'path'          => $file->getRealPath(),
+                'section'       => $this->section
             ];
         }
 
@@ -95,8 +108,17 @@ class Finder implements FinderInterface
         );
     }
 
-    private function sort($order = 'desc'): array
+    private function sort(array $articles, $order = 'desc'): array
     {
-        return [];
+        usort($articles, function ($prevArticle, $nextArticle) use ($order) {
+            $prevDate = new DateTime($prevArticle->getDate());
+            $nextDate = new DateTime($nextArticle->getDate());
+            if ($order === 'desc') {
+                return  $nextDate <=> $prevDate;
+            }
+
+            return  $prevDate <=> $nextDate;
+        });
+        return $articles;
     }
 }

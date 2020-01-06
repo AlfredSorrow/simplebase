@@ -8,4 +8,5 @@ interface FinderInterface
     function findBySlug(string $slug): Article;
     function findByCategories(array $categories): array;
     function findAll(): array;
+    static function setRootDirectory(string $path);
 }
