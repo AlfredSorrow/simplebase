@@ -19,7 +19,7 @@ class Finder implements FinderInterface
         self::$rootDirectory = $path;
     }
 
-    public function __construct($section)
+    public function __construct(string $section)
     {
         $this->section = $section;
         $this->sectionPath = self::$rootDirectory . DIRECTORY_SEPARATOR . $this->section;
@@ -67,7 +67,7 @@ class Finder implements FinderInterface
     private function collectArticles(string $path): array
     {
         if (!is_dir($path)) {
-            throw new Exception('This Category does not exist');
+            throw new Exception('This category does not exist');
         }
         $directory = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
         $iterator = new RecursiveIteratorIterator($directory);

@@ -4,6 +4,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use SimpleBase\Article\Finder;
 use SimpleBase\User\User;
+
+use function SimpleBase\Functions\getCategories;
 use function SimpleBase\Functions\render;
 use function SimpleBase\Functions\paginate;
 
@@ -56,7 +58,7 @@ $sections = [
     ],
 ];
 
-
+s(getCategories(PUBLIC_PATH.DIRECTORY_SEPARATOR.'blog'));
 /* Все статьи секций */
 foreach ($sections as $section) {
     $app->get("/{$section['name']}/", function (Response $response) use ($section, $user) {

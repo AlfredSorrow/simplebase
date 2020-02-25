@@ -15,6 +15,11 @@ class User implements UserInterface
 
     public function isAuthorized(): bool
     {
-        return (bool) ($_SESSION['auth'] ?? false);
+        return $_SESSION['auth'] ?? false;
+    }
+
+    public function logout(): void
+    {
+        $_SESSION['auth'] = false;
     }
 }
