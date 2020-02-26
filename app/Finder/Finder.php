@@ -126,10 +126,12 @@ class Finder implements FinderInterface
         return $articles;
     }
 
-    public function getCategories(string $dir = $this->sectionPath): array
+    public function getCategories(string $dir = ''): array
     {
-        if (empty($dir)) {
+        if (empty($dir) && empty($this->sectionPath)) {
             return [];
+        } elseif (empty($dir)) {
+            $dir = $this->sectionPath;
         }
     
         $dirs = [];

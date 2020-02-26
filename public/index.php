@@ -23,6 +23,7 @@ $app->addErrorMiddleware(true, true, true);
 // Main Page
 $app->get('/', function (Response $response) use ($finder) {
     $articles = $finder->setSection('blog')->getAllArticles();
+    $finder->getCategories();
     $response->getBody()->write(render('main', compact('articles')));
     return $response;
 });
@@ -57,7 +58,7 @@ $sections = [
     ],
 ];
 
-s(getCategories(PUBLIC_PATH.DIRECTORY_SEPARATOR.'blog'));
+
 /* Все статьи секций */
 foreach ($sections as $section) {
     $app->get("/{$section['name']}/", function (Response $response) use ($section, $user, $finder) {

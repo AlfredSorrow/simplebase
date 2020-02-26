@@ -2,8 +2,6 @@
 
 namespace SimpleBase\Functions;
 
-use SimpleBase\Article\Article;
-
 function render($filepath, $variables = [], $wrapper = 'wrapper'): string
 {
     $templatePath = dirname(__DIR__) . '/view/' . $filepath . '.phtml';
