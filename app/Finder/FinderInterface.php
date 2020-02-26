@@ -10,5 +10,5 @@ interface FinderInterface
     function getArticleBySlug(string $slug): Article;
     function getArticlesByCategories(array $categories): array;
     function getAllArticles(): array;
-    //function getCategories(): array;
+    function getCategories(string $dir): array;
 }

@@ -12,7 +12,6 @@ use function SimpleBase\Functions\paginate;
 require dirname(__DIR__) . '/app/Bootstrap.php';
 
 $finder = new Finder(PUBLIC_PATH);
-
 $user = new User();
 
 // Instantiate App
@@ -22,7 +21,7 @@ $app = \DI\Bridge\Slim\Bridge::create();
 $app->addErrorMiddleware(true, true, true);
 
 // Main Page
-$app->get('/', function (Response $response) use ($user, $finder) {
+$app->get('/', function (Response $response) use ($finder) {
     $articles = $finder->setSection('blog')->getAllArticles();
     $response->getBody()->write(render('main', compact('articles')));
     return $response;

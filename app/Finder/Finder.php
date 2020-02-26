@@ -125,4 +125,31 @@ class Finder implements FinderInterface
         });
         return $articles;
     }
+
+    public function getCategories(string $dir = $this->sectionPath): array
+    {
+        if (empty($dir)) {
+            return [];
+        }
+    
+        $dirs = [];
+        $directoryIterator = new \DirectoryIterator($dir);
+        foreach ($directoryIterator as $file) {
+            if (
+                $file->isDot()
+                || !$file->isDir()
+                || !$file->isReadable()
+            ) {
+                continue;
+            }
+    
+            $dirs[] = [
+                'name' => $file->getBasename(),
+                'path' => $file->getPathname(),
+                'childs' => self::getCategories($file->getPathname())
+            ];
+        }
+    
+        return $dirs;
+    }
 }
