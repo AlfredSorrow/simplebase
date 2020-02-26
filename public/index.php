@@ -2,7 +2,7 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use SimpleBase\Article\Finder;
+use SimpleBase\Finder\Finder;
 use SimpleBase\User\User;
 
 use function SimpleBase\Functions\getCategories;
@@ -11,7 +11,7 @@ use function SimpleBase\Functions\paginate;
 
 require dirname(__DIR__) . '/app/Bootstrap.php';
 
-Finder::setRootDirectory(PUBLIC_PATH);
+$finder = new Finder(PUBLIC_PATH);
 
 $user = new User();
 
@@ -22,8 +22,8 @@ $app = \DI\Bridge\Slim\Bridge::create();
 $app->addErrorMiddleware(true, true, true);
 
 // Main Page
-$app->get('/', function (Response $response) use ($user) {
-    $articles = (new Finder('blog'))->findAll();
+$app->get('/', function (Response $response) use ($user, $finder) {
+    $articles = $finder->setSection('blog')->getAllArticles();
     $response->getBody()->write(render('main', compact('articles')));
     return $response;
 });
@@ -61,9 +61,9 @@ $sections = [
 s(getCategories(PUBLIC_PATH.DIRECTORY_SEPARATOR.'blog'));
 /* Все статьи секций */
 foreach ($sections as $section) {
-    $app->get("/{$section['name']}/", function (Response $response) use ($section, $user) {
+    $app->get("/{$section['name']}/", function (Response $response) use ($section, $user, $finder) {
         if ($section['isPublic'] || $user->isAuthorized()) {
-            $articles = (new Finder($section['name']))->findAll();
+            $articles = $finder->setSection($section['name'])->getAllArticles();
             $response->getBody()->write(render('main', compact('articles')));
             return $response;
         }
@@ -72,9 +72,9 @@ foreach ($sections as $section) {
         return $response->withStatus(401);
     });
 
-    $app->get("/{$section['name']}/page/{number}", function ($number, Response $response) use ($section, $user) {
+    $app->get("/{$section['name']}/page/{number}", function ($number, Response $response) use ($section, $user, $finder) {
         if ($section['isPublic'] || $user->isAuthorized()) {
-            $articles = (new Finder($section['name']))->findAll();
+            $articles = $finder->setSection($section['name'])->getAllArticles();
             $articles = paginate($articles, $number, 5);
             $response->getBody()->write(render('main', compact('articles', 'number')));
             return $response;
@@ -83,9 +83,9 @@ foreach ($sections as $section) {
         return $response->withStatus(401);
     })->setName("{$section['name']}Pages");
 
-    $app->get("/{$section['name']}/{categories:.*}/", function ($categories, Response $response) use ($section, $user) {
+    $app->get("/{$section['name']}/{categories:.*}/", function ($categories, Response $response) use ($section, $user, $finder) {
         if ($section['isPublic'] || $user->isAuthorized()) {
-            $articles = (new Finder($section['name']))->findByCategories(explode('/', $categories));
+            $articles = $finder->setSection($section['name'])->getArticlesByCategories(explode('/', $categories));
             $response->getBody()->write(render('main', compact('articles')));
             return $response;
         }
@@ -93,9 +93,9 @@ foreach ($sections as $section) {
         return $response->withStatus(401);
     });
 
-    $app->get("/{$section['name']}/{slug}", function ($slug, Response $response) use ($section, $user) {
+    $app->get("/{$section['name']}/{slug}", function ($slug, Response $response) use ($section, $user, $finder) {
         if ($section['isSharable'] || $user->isAuthorized()) {
-            $article = (new Finder($section['name']))->findBySlug($slug);
+            $article = $finder->setSection($section['name'])->getArticleBySlug($slug);
             $response->getBody()->write(render('detail', compact('article')));
             return $response;
         }

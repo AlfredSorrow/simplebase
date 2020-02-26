@@ -1,6 +1,8 @@
 <?php
 
-namespace SimpleBase\Article;
+namespace SimpleBase\Finder;
+
+use SimpleBase\Article\Article;
 
 use Exception;
 use RecursiveDirectoryIterator;
@@ -10,22 +12,24 @@ use DateTime;
 
 class Finder implements FinderInterface
 {
-    private $section;
+    private $section = '';
 
-    static $rootDirectory;
+    private $rootDirectory = '';
 
-    public static function setRootDirectory(string $path)
+    public function __construct(string $path)
     {
-        self::$rootDirectory = $path;
+        $this->rootDirectory = $path;
+        $this->sectionPath = $path;
     }
 
-    public function __construct(string $section)
+    public function setSection(string $section): self
     {
         $this->section = $section;
-        $this->sectionPath = self::$rootDirectory . DIRECTORY_SEPARATOR . $this->section;
+        $this->sectionPath = $this->rootDirectory . DIRECTORY_SEPARATOR . $this->section;
+        return $this;
     }
 
-    public function findBySlug($slug): Article
+    public function getArticleBySlug(string $slug): Article
     {
         $articleCollection = $this->collectArticles($this->sectionPath);
         $filteredArticle = array_filter($articleCollection, function ($article) use ($slug) {
@@ -42,7 +46,7 @@ class Finder implements FinderInterface
 
         return new Article(current($filteredArticle));
     }
-    public function findAll(): array
+    public function getAllArticles(): array
     {
         $articleCollection = $this->collectArticles($this->sectionPath);
 
@@ -52,7 +56,7 @@ class Finder implements FinderInterface
 
         return $this->sort($articles);
     }
-    public function findByCategories(array $categories): array
+    public function getArticlesByCategories(array $categories): array
     {
         $categoryPath = $this->sectionPath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $categories);
         $articleCollection = $this->collectArticles($categoryPath);
