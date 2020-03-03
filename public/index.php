@@ -23,8 +23,8 @@ $app->addErrorMiddleware(true, true, true);
 // Main Page
 $app->get('/', function (Response $response) use ($finder) {
     $articles = $finder->setSection('blog')->getAllArticles();
-    $finder->getCategories();
-    $response->getBody()->write(render('main', compact('articles')));
+    $categories = $finder->getCategories();
+    $response->getBody()->write(render('main', compact('articles', 'categories')));
     return $response;
 });
 
@@ -64,6 +64,7 @@ foreach ($sections as $section) {
     $app->get("/{$section['name']}/", function (Response $response) use ($section, $user, $finder) {
         if ($section['isPublic'] || $user->isAuthorized()) {
             $articles = $finder->setSection($section['name'])->getAllArticles();
+            $categories = $finder->getCategories();
             $response->getBody()->write(render('main', compact('articles')));
             return $response;
         }
@@ -76,6 +77,7 @@ foreach ($sections as $section) {
         if ($section['isPublic'] || $user->isAuthorized()) {
             $articles = $finder->setSection($section['name'])->getAllArticles();
             $articles = paginate($articles, $number, 5);
+            $categories = $finder->getCategories();
             $response->getBody()->write(render('main', compact('articles', 'number')));
             return $response;
         }
@@ -86,6 +88,7 @@ foreach ($sections as $section) {
     $app->get("/{$section['name']}/{categories:.*}/", function ($categories, Response $response) use ($section, $user, $finder) {
         if ($section['isPublic'] || $user->isAuthorized()) {
             $articles = $finder->setSection($section['name'])->getArticlesByCategories(explode('/', $categories));
+            $categories = $finder->getCategories();
             $response->getBody()->write(render('main', compact('articles')));
             return $response;
         }
@@ -96,6 +99,7 @@ foreach ($sections as $section) {
     $app->get("/{$section['name']}/{slug}", function ($slug, Response $response) use ($section, $user, $finder) {
         if ($section['isSharable'] || $user->isAuthorized()) {
             $article = $finder->setSection($section['name'])->getArticleBySlug($slug);
+            $categories = $finder->getCategories();
             $response->getBody()->write(render('detail', compact('article')));
             return $response;
         }

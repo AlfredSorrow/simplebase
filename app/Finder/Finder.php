@@ -41,7 +41,7 @@ class Finder implements FinderInterface
         }
 
         if (empty($filteredArticle)) {
-            throw new Exception('Not Found');
+            throw new Exception('Aricle Not Found', 404);
         }
 
         return new Article(current($filteredArticle));
@@ -71,7 +71,7 @@ class Finder implements FinderInterface
     private function collectArticles(string $path): array
     {
         if (!is_dir($path)) {
-            throw new Exception('This category does not exist');
+            throw new Exception('This category does not exist', 404);
         }
         $directory = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
         $iterator = new RecursiveIteratorIterator($directory);

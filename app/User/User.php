@@ -20,6 +20,6 @@ class User implements UserInterface
 
     public function logout(): void
     {
-        $_SESSION['auth'] = false;
+        unset($_SESSION['auth']);
     }
 }
