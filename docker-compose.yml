@@ -1,0 +1,17 @@
+version: "3.7"
+# For local development
+services:
+    web:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./:/var/www/
+            - ./nginx.local.conf:/etc/nginx/conf.d/site.conf
+        environment:
+            DEBUG: "true"
+
+    php:
+        image: php:7.4-fpm
+        volumes:
+            - ./:/var/www/

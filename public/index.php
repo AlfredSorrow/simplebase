@@ -5,7 +5,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use SimpleBase\Finder\Finder;
 use SimpleBase\User\User;
 
-use function SimpleBase\Functions\getCategories;
 use function SimpleBase\Functions\render;
 use function SimpleBase\Functions\paginate;
 
@@ -26,19 +25,37 @@ $app->get('/', function (Response $response) use ($finder) {
     $categories = $finder->getCategories();
     $response->getBody()->write(render('main', compact('articles', 'categories')));
     return $response;
-});
+})->setName('main');
 
 // Authorization
-$app->post('/login', function (Request $request, Response $response) use ($user) {
+$app->post('/login/', function (Request $request, Response $response) use ($user) {
     $pasword = $request->getParsedBody()['password'];
-    $user->logIn($pasword);
+    if ($user->logIn($pasword)->isAuthorized()) {
+        return $response
+            ->withHeader('Location', '/')
+            ->withStatus(302);
+    };
+    $error = 'Неправильно введены данные для авторизации';
+    $response->getBody()->write(render('login', compact('error')));
     return $response;
 });
 
-$app->get('/login', function (Response $response) {
+$app->get('/login/', function (Response $response) use ($user) {
+    if ($user->isAuthorized()) {
+        return $response
+            ->withHeader('Location', '/')
+            ->withStatus(302);
+    }
     $response->getBody()->write(render('login'));
     return $response;
-});
+})->setName('login');
+
+$app->get('/logout/', function (Response $response) use ($user) {
+    $user->logout();
+    return $response
+        ->withHeader('Location', '/')
+        ->withStatus(302);
+})->setName('logout');
 
 $sections = [
     [
@@ -71,7 +88,7 @@ foreach ($sections as $section) {
 
         $response->getBody()->write(render('restricted'));
         return $response->withStatus(401);
-    });
+    })->setName($section['name']);
 
     $app->get("/{$section['name']}/page/{number}", function ($number, Response $response) use ($section, $user, $finder) {
         if ($section['isPublic'] || $user->isAuthorized()) {
@@ -105,7 +122,7 @@ foreach ($sections as $section) {
         }
         $response->getBody()->write(render('restricted'));
         return $response->withStatus(401);
-    });
+    })->setName($section['name']);
 }
 
 
