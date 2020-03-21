@@ -79,15 +79,17 @@ class Finder implements FinderInterface
         $articleCollection = [];
 
         foreach ($iterator as $file) {
-            $categories = $this->getCategoriesFromPath($file->getPath());
-            ['date' => $date, 'slug' => $slug] = $this->parseFileName($file->getBaseName('.md'));
-            $articleCollection[] = [
-                'slug'          => $slug,
-                'date'          => $date,
-                'categories'    => $categories,
-                'path'          => $file->getRealPath(),
-                'section'       => $this->section
-            ];
+            if (strtolower($file->getExtension()) === 'md') {
+                $categories = $this->getCategoriesFromPath($file->getPath());
+                ['date' => $date, 'slug' => $slug] = $this->parseFileName($file->getBaseName('.md'));
+                $articleCollection[] = [
+                    'slug'          => $slug,
+                    'date'          => $date,
+                    'categories'    => $categories,
+                    'path'          => $file->getRealPath(),
+                    'section'       => $this->section
+                ];
+            }
         }
 
         return $articleCollection;
@@ -133,7 +135,7 @@ class Finder implements FinderInterface
         } elseif (empty($dir)) {
             $dir = $this->sectionPath;
         }
-    
+
         $dirs = [];
         $directoryIterator = new \DirectoryIterator($dir);
         foreach ($directoryIterator as $file) {
@@ -144,14 +146,14 @@ class Finder implements FinderInterface
             ) {
                 continue;
             }
-    
+
             $dirs[] = [
                 'name' => $file->getBasename(),
                 'path' => $file->getPathname(),
                 'childs' => self::getCategories($file->getPathname())
             ];
         }
-    
+
         return $dirs;
     }
 }

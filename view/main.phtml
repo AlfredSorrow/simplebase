@@ -1,13 +1,13 @@
-<?php
-foreach ($articles as $article) : ?>
-    <div class="card mt-3">
-        <div class="card-body">
-            <p><?php echo $article->text(); ?></p>
-            <p><?php echo $article->getDate(); ?><p>
-            <p><?php echo $article->getSlug(); ?></p>
-            <p><?php echo $article->getPath(); ?></p>
-            <p><?php echo implode(' --> ', $article->getCategories()); ?></p>
-            <p><?php echo $article->getLink(); ?></p>
-        </div>
-    </div>
+<aside class="categories">
+    there will be categories
+</aside>
+<?php foreach ($articles as $article) : ?>
+    <article>
+        <p><?php echo $article->text(); ?></p>
+        <p><?php echo $article->getDate(); ?></p>
+        <p><?php echo $article->getSlug(); ?></p>
+        <p><?php echo $article->getPath(); ?></p>
+        <p><?php echo implode(' --> ', $article->getCategories()); ?></p>
+        <p><?php echo $article->getLink(); ?></p>
+    </article>
 <?php endforeach; ?>

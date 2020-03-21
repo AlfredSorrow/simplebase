@@ -1,2 +1,5 @@
 /vendor/
 .env
+/public/*/
+/public/.gitignore
+!/public/front/

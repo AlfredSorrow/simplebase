@@ -1,0 +1,76 @@
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    margin: 0px ;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.main-nav {
+    display: flex;
+    background: #343a40;
+    padding: .5rem 1rem;
+    color: #fff;
+    min-height: 4rem;
+}
+
+.blog-name {
+    display: inline-block;
+    padding-top: .3125rem;
+    padding-bottom: .3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    color: inherit;
+    align-self: center;
+}
+
+.nav-sections {
+    display: flex;
+    color: inherit;
+    flex-grow: 1;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, .75);
+    display: block;
+    align-self: center;
+}
+
+.nav-link.active {
+    color: #fff;
+}
+.nav-link.last {
+    margin-left: auto;
+}
+
+.main-nav .nav-sections .nav-link {
+    padding-right: .5rem;
+    padding-left: .5rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+article {
+    margin-left: 21%;
+    margin-right: 10%;
+}
+
+aside.categories {
+    position: fixed;
+    left: inherit;
+    width: 20%;
+}
+
+.d-flex {
+    display: flex;
+}
