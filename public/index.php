@@ -23,7 +23,7 @@ $app->addErrorMiddleware(true, true, true);
 $app->get('/', function (Response $response) use ($finder) {
     $articles = $finder->setSection('blog')->getAllArticles();
     $categories = $finder->getCategories();
-    $response->getBody()->write(render('main', compact('articles', 'categories')));
+    $response->getBody()->write(render('section', compact('articles', 'categories')));
     return $response;
 })->setName('main');
 
@@ -82,7 +82,7 @@ foreach ($sections as $section) {
         if ($section['isPublic'] || $user->isAuthorized()) {
             $articles = $finder->setSection($section['name'])->getAllArticles();
             $categories = $finder->getCategories();
-            $response->getBody()->write(render('main', compact('articles')));
+            $response->getBody()->write(render('section', compact('articles','categories')));
             return $response;
         }
 
@@ -95,7 +95,7 @@ foreach ($sections as $section) {
             $articles = $finder->setSection($section['name'])->getAllArticles();
             $articles = paginate($articles, $number, 5);
             $categories = $finder->getCategories();
-            $response->getBody()->write(render('main', compact('articles', 'number')));
+            $response->getBody()->write(render('section', compact('articles', 'number', 'categories')));
             return $response;
         }
         $response->getBody()->write(render('restricted'));
@@ -106,7 +106,7 @@ foreach ($sections as $section) {
         if ($section['isPublic'] || $user->isAuthorized()) {
             $articles = $finder->setSection($section['name'])->getArticlesByCategories(explode('/', $categories));
             $categories = $finder->getCategories();
-            $response->getBody()->write(render('main', compact('articles')));
+            $response->getBody()->write(render('section', compact('articles','categories')));
             return $response;
         }
         $response->getBody()->write(render('restricted'));

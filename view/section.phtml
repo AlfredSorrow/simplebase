@@ -1,5 +1,9 @@
+<?php
+
+use function SimpleBase\Functions\prepareCategories;
+?>
 <aside class="categories">
-    there will be categories
+    <?php echo prepareCategories($categories, ['ul' => 'class="categories"']); ?>
 </aside>
 <?php foreach ($articles as $article) : ?>
     <article>
