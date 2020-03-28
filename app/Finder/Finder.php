@@ -139,21 +139,28 @@ class Finder implements FinderInterface
         $dirs = [];
         $directoryIterator = new \DirectoryIterator($dir);
         foreach ($directoryIterator as $file) {
-            if (
-                $file->isDot()
-                || !$file->isDir()
-                || !$file->isReadable()
-            ) {
+            if ($this->shouldSkipFile($file)) {
                 continue;
             }
 
+            $link = str_replace($this->rootDirectory, '', $file->getPathname()) . '/';
+
             $dirs[] = [
                 'name' => $file->getBasename(),
+                'link' => $link,
                 'path' => $file->getPathname(),
                 'childs' => self::getCategories($file->getPathname())
             ];
         }
 
         return $dirs;
+    }
+
+    private function shouldSkipFile(\DirectoryIterator $file): bool
+    {
+        return $file->isDot()
+        || !$file->isDir()
+        || !$file->isReadable()
+        || !$file->valid();
     }
 }
