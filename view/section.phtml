@@ -3,7 +3,12 @@
 use function SimpleBase\Functions\prepareCategories;
 ?>
 <aside class="categories">
-    <?php echo prepareCategories($categories, ['ul' => 'class="categories"']); ?>
+    <?php
+    $styles = [
+        'li' => 'class="categories-item"',
+        'ul' => 'class="categories"',
+    ];
+    echo prepareCategories($categories, $styles); ?>
 </aside>
 <?php foreach ($articles as $article) : ?>
     <article>

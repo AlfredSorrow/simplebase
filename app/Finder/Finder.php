@@ -22,7 +22,7 @@ class Finder implements FinderInterface
         $this->sectionPath = $path;
     }
 
-    public function setSection(string $section): self
+    public function setSection(string $section): FinderInterface
     {
         $this->section = $section;
         $this->sectionPath = $this->rootDirectory . DIRECTORY_SEPARATOR . $this->section;
@@ -46,6 +46,7 @@ class Finder implements FinderInterface
 
         return new Article(current($filteredArticle));
     }
+
     public function getAllArticles(): array
     {
         $articleCollection = $this->collectArticles($this->sectionPath);
@@ -149,7 +150,7 @@ class Finder implements FinderInterface
                 'name' => $file->getBasename(),
                 'link' => $link,
                 'path' => $file->getPathname(),
-                'childs' => self::getCategories($file->getPathname())
+                'childs' => $this->getCategories($file->getPathname())
             ];
         }
 

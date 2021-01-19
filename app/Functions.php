@@ -19,7 +19,7 @@ function paginate(array $articles, int $numberOfPage, int $articlesPerPage = 10)
 
 function prepareCategories(array $categories, array $attributesToTag): string
 {
-    if (empty($$categories)) {
+    if (empty($categories)) {
         return '';
     }
     $ulAttr = !empty($attributesToTag['ul']) ? " {$attributesToTag['ul']} " : '';
@@ -27,7 +27,7 @@ function prepareCategories(array $categories, array $attributesToTag): string
     $liAttr = !empty($attributesToTag['li']) ? " {$attributesToTag['li']} " : '';
     $html = "<ul {$ulAttr} >";
     foreach ($categories as $category) {
-        $html .= "<li{$liAttr}> <a href='{$category['link']}'{$aAttr}>  {$category['name']} </a>";
+        $html .= "<li{$liAttr}> <a href='{$category['link']}'{$aAttr}>{$category['name']}</a>";
         if (!empty($category['childs'])) {
             $html .= prepareCategories($category['childs'], $attributesToTag);
         }
@@ -35,4 +35,38 @@ function prepareCategories(array $categories, array $attributesToTag): string
     }
 
     return "{$html}</ul>";
+}
+
+$array = range(1, 11);
+
+function permutation($origin): array
+{
+    $factorial = function ($n) {
+        $factorial = 1;
+        for ($i = 1; $i <= $n; $i++) {
+            $factorial *= $i;
+        }
+
+        return $factorial;
+    };
+
+    $permutations = [];
+    $permutations[] = $origin;
+    
+    $size = count($origin);
+    $n = $factorial($size);
+    $a = 0;
+    for ($i = 1; $i < $n; $i++) {
+        $tmp = $origin[$a];
+        $origin[$a] = $origin[$a + 1];
+        $origin[$a + 1] = $tmp;
+        $permutations[] = $origin;
+        $a++;
+
+        if ($a + 1 === $size) {
+            $a = 0;
+        }
+    }
+
+    return $permutations;
 }
